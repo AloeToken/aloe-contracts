@@ -2,8 +2,8 @@
 /.idea/
 /secrets.json
 /scripts/
-/migrations/
 /build/
 /test/
 /accounts.json
-/truffle-config.js
+.secret
+.apikey_bscscan

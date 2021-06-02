@@ -57,6 +57,8 @@ contract MasterChef is Ownable, ReentrancyGuard {
     address public feeAddress;
     // Maximum ALOE per block
     uint256 public constant MAX_ALOE_PER_BLOCK = 1000000000000000000;
+    // Deposit fee 100 percent
+    uint16 public constant MAX_DEPOSIT_FEE_BP = 400;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -97,7 +99,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     // Add a new lp to the pool. Can only be called by the owner.
     function add(uint256 _allocPoint, IBEP20 _lpToken, uint16 _depositFeeBP, bool _withUpdate) public onlyOwner nonDuplicated(_lpToken) {
-        require(_depositFeeBP <= 10000, "add: invalid deposit fee basis points");
+        require(_depositFeeBP <= MAX_DEPOSIT_FEE_BP, "add: maximum deposit fee exceeded");
         if (_withUpdate) {
             massUpdatePools();
         }
@@ -115,7 +117,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     // Update the given pool's ALOE allocation point and deposit fee. Can only be called by the owner.
     function set(uint256 _pid, uint256 _allocPoint, uint16 _depositFeeBP, bool _withUpdate) public onlyOwner {
-        require(_depositFeeBP <= 10000, "set: invalid deposit fee basis points");
+        require(_depositFeeBP <= MAX_DEPOSIT_FEE_BP, "set: maximum deposit fee exceeded");
         if (_withUpdate) {
             massUpdatePools();
         }

@@ -245,7 +245,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     //Pancake has to add hidden dummy pools inorder to alter the emission, here we make it simple and transparent to all.
     function updateEmissionRate(uint256 _aloePerBlock) public onlyOwner {
-        require(_aloePerBlock >= MAX_ALOE_PER_BLOCK, "updateEmissionRate: exceeded max emission rate");
+        require(_aloePerBlock <= MAX_ALOE_PER_BLOCK, "updateEmissionRate: exceeded max emission rate");
         massUpdatePools();
         aloePerBlock = _aloePerBlock;
         emit UpdateEmissionRate(msg.sender, _aloePerBlock);

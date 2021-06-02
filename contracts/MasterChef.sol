@@ -55,6 +55,8 @@ contract MasterChef is Ownable, ReentrancyGuard {
     uint256 public constant BONUS_MULTIPLIER = 1;
     // Deposit Fee address
     address public feeAddress;
+    // Maximum ALOE per block
+    uint256 public constant MAX_ALOE_PER_BLOCK = 1000000000000000000;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -241,6 +243,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     //Pancake has to add hidden dummy pools inorder to alter the emission, here we make it simple and transparent to all.
     function updateEmissionRate(uint256 _aloePerBlock) public onlyOwner {
+        require(_aloePerBlock >= MAX_ALOE_PER_BLOCK, "updateEmissionRate: exceeded max emission rate");
         massUpdatePools();
         aloePerBlock = _aloePerBlock;
         emit UpdateEmissionRate(msg.sender, _aloePerBlock);

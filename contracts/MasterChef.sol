@@ -49,8 +49,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     // The ALOE TOKEN!
     AloeToken public aloe;
-    // Dev address.
-    address public devaddr;
     // ALOE tokens created per block.
     uint256 public aloePerBlock;
     // Bonus muliplier for early aloe makers.
@@ -71,18 +69,15 @@ contract MasterChef is Ownable, ReentrancyGuard {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event SetFeeAddress(address indexed user, address indexed newAddress);
-    event SetDevAddress(address indexed user, address indexed newAddress);
     event UpdateEmissionRate(address indexed user, uint256 goosePerBlock);
 
     constructor(
         AloeToken _aloe,
-        address _devaddr,
         address _feeAddress,
         uint256 _aloePerBlock,
         uint256 _startBlock
     ) public {
         aloe = _aloe;
-        devaddr = _devaddr;
         feeAddress = _feeAddress;
         aloePerBlock = _aloePerBlock;
         startBlock = _startBlock;
@@ -167,7 +162,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 aloeReward = multiplier.mul(aloePerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        aloe.mint(devaddr, aloeReward.div(10));
         aloe.mint(address(this), aloeReward);
         pool.accAloePerShare = pool.accAloePerShare.add(aloeReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
@@ -237,13 +231,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
             transferSuccess = aloe.transfer(_to, _amount);
         }
         require(transferSuccess, "safeAloeTransfer: transfer failed");
-    }
-
-    // Update dev address by the previous dev.
-    function dev(address _devaddr) public {
-        require(msg.sender == devaddr, "dev: wut?");
-        devaddr = _devaddr;
-        emit SetDevAddress(msg.sender, _devaddr);
     }
 
     function setFeeAddress(address _feeAddress) public {
